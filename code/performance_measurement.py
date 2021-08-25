@@ -142,7 +142,20 @@ def measure():
 
             roc_auc = auc(fpr, tpr)
 
-            # method I: plt
+            ###########################
+            # October data measurment #
+            ###########################
+            october_df = pd.read_csv("../data/us_2020_election_data_october.csv", header=0)
+
+            october_target = october_df["target"]
+
+
+            october_f1 = f1_score(october_target, selected_model.predict(october_df[feature_set[run]]))
+            october_probs = XGB_fitted_opt.predict_proba(october_df[feature_set[run]])[:, 1]
+            october_fpr, october_tpr, october_threshold = roc_curve(october_target, october_probs)
+
+            october_roc_auc = auc(october_fpr, october_tpr)
+
             data_res[str(run)]["PREC"].append(XGB_precision)
             data_res[str(run)]["REC"].append(XGB_recall)
 
@@ -151,6 +164,9 @@ def measure():
             data_res[str(run)]["ROC"].append(roc_auc)
             data_res[str(run)]["AUC"].append(XGB_auc)
             data_res[str(run)]["F1"].append(XGB_f1)
+            data_res[str(run)]["F1_october"].append(october_f1)
+            data_res[str(run)]["ROC_october"].append(october_roc_auc)
+            
 
             FP.append(fpr)
             TP.append(tpr)
@@ -416,4 +432,7 @@ if __name__ == "__main__":
     model_labels = ["Statistical General only", "Statistical", "Context ", "Time", "Graph", "Our Model"]
     for i in res:
         print("{} F1:{}".format(model_labels[int(i)], sum(res[i]["F1"]) / len(res[i]["F1"])))
+    print("Our model features performance of october data: F1:{} ROC-AUC:{}".format(
+        sum(res["5"]["F1_october"]) / len(res["5"]["F1_october"]),
+        sum(res["5"]["ROC_october"]) / len(res["5"]["ROC_october"])))
     shap_values()
