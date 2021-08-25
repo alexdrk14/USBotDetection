@@ -166,7 +166,7 @@ def measure():
             data_res[str(run)]["F1"].append(XGB_f1)
             data_res[str(run)]["F1_october"].append(october_f1)
             data_res[str(run)]["ROC_october"].append(october_roc_auc)
-            
+
 
             FP.append(fpr)
             TP.append(tpr)
