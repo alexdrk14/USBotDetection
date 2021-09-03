@@ -1,3 +1,4 @@
 code/cache
 code/.ipynb_checkpoints
 code/result*.txt
+*.pyc
