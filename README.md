@@ -9,3 +9,8 @@ Data folder contain dataset with all labeled users (without user-id) and set of 
 
 In plot folder performance metrics result are stored in form of figures. 
 
+
+Execution flow:
+- code/feature_selection.py
+- code/model_fine_tuning.py
+- performance_measurement.py
