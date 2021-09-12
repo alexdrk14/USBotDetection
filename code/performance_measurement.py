@@ -179,7 +179,7 @@ def measure():
 
 
 def roc_curves(data_res):
-    plt.rcParams.update({'font.size': 11})
+    plt.rcParams.update({'font.size': 13})
     fig = plt.figure(figsize=(6, 6), dpi=600)
     model_labels = ["Statistical General only", "Statistical", "Context ", "Time", "Graph", "Our Model"]
 
@@ -275,15 +275,15 @@ def roc_curves(data_res):
 
     plt.xlim([-0.05, 1.05])
     plt.ylim([-0.05, 1.05])
-    plt.xlabel('False Positive rate', fontsize=11)  # ('1-Specificity', fontsize=13)
-    plt.ylabel('True Positive rate ', fontsize=11)  # ('Sensitivity', fontsize=13)
-    plt.title('ROC curves ', fontsize=13)
+    plt.xlabel('False Positive rate', fontsize=13)  # ('1-Specificity', fontsize=13)
+    plt.ylabel('True Positive rate ', fontsize=13)  # ('Sensitivity', fontsize=13)
+    plt.title('ROC curves ', fontsize=15)
     plt.legend(loc='best')
 
     plt.savefig("../plots/roc_mean.png", bbox_inches='tight', dpi=600, facecolor='w')
 
 def pr_curves(data_res):
-    plt.rcParams.update({'font.size': 11})
+    plt.rcParams.update({'font.size': 13})
     fig = plt.figure(figsize=(6, 6), dpi=600)
     model_labels = ["Statistical General only", "Statistical", "Context ", "Time", "Graph", "Our Model"]
 
@@ -384,14 +384,15 @@ def pr_curves(data_res):
 
     plt.xlim([-0.05, 1.05])
     plt.ylim([-0.05, 1.05])
-    plt.xlabel('Precision', fontsize=11)  # ('1-Specificity', fontsize=13)
-    plt.ylabel('Recall', fontsize=11)  # ('Sensitivity', fontsize=13)
-    plt.title('Precision vs Recall curves ', fontsize=13)
+    plt.xlabel('Precision', fontsize=13)  # ('1-Specificity', fontsize=13)
+    plt.ylabel('Recall', fontsize=13)  # ('Sensitivity', fontsize=13)
+    plt.title('Precision vs Recall curves ', fontsize=15)
     plt.legend(loc='best')
 
     plt.savefig("../plots/prec_recal_mean.png", bbox_inches='tight', dpi=600, facecolor='w')
 
 def shap_values():
+    #plt.rcParams.update({'font.size': 13})
     filename = "../data/us_2020_election_data.csv"
     model_params = parse_model_params("xgboost")
 
@@ -422,6 +423,7 @@ def shap_values():
     shap_values_xgb = shap.TreeExplainer(XGB_model).shap_values(X_test)
 
     fig = plt.figure()
+    #plt.rcParams.update({'font.size': 13})
     shap.summary_plot(shap_values_xgb[1], X_test)
     fig.savefig("../plots/shap.png", bbox_inches='tight', dpi=600, facecolor='w')
 
