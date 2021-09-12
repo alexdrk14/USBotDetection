@@ -16,9 +16,12 @@ In plot folder we store performance metrics result in form of figures.
 
 
 Execution flow:
-- Step 1: code/feature_selection.py
-- Step 2: code/model_fine_tuning.py
-- Step 3: performance_measurement.py
+1. code/feature_selection.py
+   - Provide file with selected features in code folder
+2. code/model_fine_tuning.py
+   - Store parameters of best model after the fine-tunin
+3. performance_measurement.py
+   - Evaluate selected model and generates figures of ROC and PR AUCs. Also provide SHAP figure that explain the model decision making based on 20 most important features.
 
 Developed framework provides state of the art performance over the Twitter US Election data. Based on the performance of unseen data we assume that is possible utilization of developed method over data more that one moth after of training data, since the performance drop is not significant.
 
