@@ -1,5 +1,7 @@
 # Machine learning Bot detection technique, based on United States election dataset (2020).
 
+Current github repo provides implementation described in paper: "Identification of Twitter Bots based on an Explainable ML Framework: the US 2020 Elections Case Study" accepted in ICWSM 2022 conference. 
+
 Code folder contain all scripts for:
 - feature selection
 - parameter fine tuning
