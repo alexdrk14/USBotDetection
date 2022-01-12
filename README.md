@@ -33,10 +33,12 @@ Execution flow:
 
 Developed framework provides state of the art performance over the Twitter US Election data. Based on the performance of unseen data we assume that is possible utilization of developed methods over data more than one month after training data, since the performance drop is not significant. 
 
-Citation
+Citation:
+```
 @article{shevtsov2021identification,
   title={Identification of Twitter Bots based on an Explainable ML Framework: the US 2020 Elections Case Study},
   author={Shevtsov, Alexander and Tzagkarakis, Christos and Antonakaki, Despoina and Ioannidis, Sotiris},
   journal={arXiv preprint arXiv:2112.04913},
   year={2021}
 }
+```
