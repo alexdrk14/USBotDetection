@@ -63,7 +63,7 @@ if __name__ == "__main__":
     """
     Flag parameter that utilize GPU histograms in case of XGBoost model.
     Set to True only for gpu configuration and XGBoost compiled for GPU usage"""
-    GPU_USE = True
+    GPU_USE = False
     feature_selection(gpu=GPU_USE)
     fine_tuning(gpu=GPU_USE)
     performance_measure(gpu=GPU_USE)

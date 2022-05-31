@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import shap, dill, ast
+import shap, ast
 
 from collections import defaultdict
 from sklearn.metrics import f1_score, roc_curve, roc_auc_score, auc, precision_recall_curve, accuracy_score, average_precision_score
@@ -109,9 +109,7 @@ def measure(gpu=False):
             # F1Es[run] = XGB_f1
             precision.append(XGB_precision)
             recall.append(XGB_recall)
-    #f_out = open("dill_object","wb")
-    #dill.dumps(data_res, f_out)
-    #f_out.close()
+
     return data_res
 
 
@@ -148,21 +146,16 @@ def roc_curves(data_res):
             # keep probabilities for the positive outcome only
             lr_probs = lr_probs[:, 1]
 
-
             # -------------- Plot Precision-Recall curves ------------------------------
             RF_fitted_opt = data_res[str(c_type)]["RF_fitted_opt"][MonteCarlo_i]
             X_test = data_res[str(c_type)]["X_test"][MonteCarlo_i]
             y_test = data_res[str(c_type)]["y_test"][MonteCarlo_i]
-
-
 
             # predict class values
             yhat = RF_fitted_opt.predict(X_test)
             lr_precision, lr_recall, _ = precision_recall_curve(y_test.values, lr_probs)
             lr_f1, lr_auc = f1_score(y_test.values, yhat), auc(lr_recall, lr_precision)
             averagePrecision = average_precision_score(y_test.values, lr_probs)
-
-
 
             # ------------------------ average values ----------------
             tprs.append(np.interp(mean_fpr, fpr, tpr))
@@ -205,7 +198,6 @@ def roc_curves(data_res):
                  lw=2, alpha=.8)
 
         plt.fill_between(mean_fpr1, tprs_lower1, tprs_upper1, color='C{}'.format(col), alpha=.1)
-        # label=r'$\pm$ 1 std. dev.')
 
     plt.xlim([-0.05, 1.05])
     plt.ylim([-0.05, 1.05])
