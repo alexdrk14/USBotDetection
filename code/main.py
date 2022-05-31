@@ -48,7 +48,7 @@ def fine_tuning(gpu=False):
         print("Model is fine-tuned already")
 
 def performance_measure(gpu=False):
-    res = measure()
+    res = measure(gpu=gpu)
     pr_curves(res)
     roc_curves(res)
     model_labels = ["Statistical General only", "Statistical", "Context ", "Time", "Graph", "Our Model"]
@@ -63,7 +63,7 @@ if __name__ == "__main__":
     """
     Flag parameter that utilize GPU histograms in case of XGBoost model.
     Set to True only for gpu configuration and XGBoost compiled for GPU usage"""
-    GPU_USE = False
+    GPU_USE = True
     feature_selection(gpu=GPU_USE)
     fine_tuning(gpu=GPU_USE)
     performance_measure(gpu=GPU_USE)

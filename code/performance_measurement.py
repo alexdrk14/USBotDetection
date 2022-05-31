@@ -109,9 +109,9 @@ def measure(gpu=False):
             # F1Es[run] = XGB_f1
             precision.append(XGB_precision)
             recall.append(XGB_recall)
-    f_out = open("dill_object","wb")
-    dill.dumps(data_res, f_out)
-    f_out.close()
+    #f_out = open("dill_object","wb")
+    #dill.dumps(data_res, f_out)
+    #f_out.close()
     return data_res
 
 

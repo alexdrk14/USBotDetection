@@ -11,7 +11,8 @@ from sklearn.svm import SVC
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler
 
 #oversampling
-from imblearn.combine import SMOTETomek
+#from imblearn.combine import SMOTETomek
+from  imblearn.over_sampling import SMOTE
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 
@@ -29,8 +30,8 @@ def scale_data(train, evaluation, test):
 # used in separated form for train and evalution datasets
 # do not use in test data at all
 def oversample(data, target):
-    smk = SMOTETomek()
-    data, target = smk.fit_sample(data, target)
+    smk = SMOTE()
+    data, target = smk.fit_resample(data, target)
     return data, target
 
 
