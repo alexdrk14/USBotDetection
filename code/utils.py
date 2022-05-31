@@ -2,6 +2,10 @@ import ast
 import pandas as pd
 import numpy as np
 
+#ML models
+from xgboost import XGBClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
 
 #Data scaling
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler
@@ -82,3 +86,33 @@ def parse_model_params(model):
         result["colsample_bytree"] = float(data.split("cSample:")[1].split(" ")[0])
         result["eval_metric"] = data.split("eval:")[1]
     return result
+
+def get_xgboost_model(objective,learning_rate,n_estimators,max_depth,colsample_bytree,eval_metric, num_class=2,gpu=False):
+    if gpu:
+        return XGBClassifier(objective=objective,
+                              num_class=num_class,
+                              learning_rate=learning_rate,
+                              n_estimators=n_estimators,
+                              max_depth=max_depth,
+                              colsample_bytree=colsample_bytree,
+                              eval_metric=eval_metric,
+                              tree_method="gpu_hist", #SERVER ONLY
+                              predictor = 'gpu_predictor',#SERVER ONLY
+                              use_label_encoder=False)
+    else:
+        return XGBClassifier(objective=objective,
+                              num_class=num_class,
+                              learning_rate=learning_rate,
+                              n_estimators=n_estimators,
+                              max_depth=max_depth,
+                              colsample_bytree=colsample_bytree,
+                              eval_metric=eval_metric,
+                              use_label_encoder=False)
+
+def get_svm_model(kernel, C):
+    return SVC(kernel=kernel, C=C, probability=True)
+
+def get_rfor_model(n_estimators,criterion,ccp_alpha,min_samples_split):
+    return RandomForestClassifier(n_estimators=n_estimators,
+                                criterion=criterion,ccp_alpha=ccp_alpha,
+                                min_samples_split=min_samples_split)

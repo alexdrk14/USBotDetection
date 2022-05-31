@@ -1,9 +1,6 @@
 from sklearn.metrics import f1_score, roc_curve, roc_auc_score, auc, precision_recall_curve, accuracy_score, average_precision_score
 from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
 
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import SVC
-from xgboost import XGBClassifier
 
 from collections import defaultdict
 import argparse, sys
@@ -12,36 +9,6 @@ from model_params import params
 
 from utils import *
 
-
-def get_xgboost_model(objective,learning_rate,n_estimators,max_depth,colsample_bytree,eval_metric, num_class=2,gpu=False):
-    if gpu:
-        return XGBClassifier(objective=objective,
-                              num_class=num_class,
-                              learning_rate=learning_rate,
-                              n_estimators=n_estimators,
-                              max_depth=max_depth,
-                              colsample_bytree=colsample_bytree,
-                              eval_metric=eval_metric,
-                              tree_method="gpu_hist", #SERVER ONLY
-                              predictor = 'gpu_predictor',#SERVER ONLY
-                              use_label_encoder=False)
-    else:
-        return XGBClassifier(objective=objective,
-                              num_class=num_class,
-                              learning_rate=learning_rate,
-                              n_estimators=n_estimators,
-                              max_depth=max_depth,
-                              colsample_bytree=colsample_bytree,
-                              eval_metric=eval_metric,
-                              use_label_encoder=False)
-
-def get_svm_model(kernel, C):
-    return SVC(kernel=kernel, C=C, probability=True)
-
-def get_rfor_model(n_estimators,criterion,ccp_alpha,min_samples_split):
-    return RandomForestClassifier(n_estimators=n_estimators,
-                                criterion=criterion,ccp_alpha=ccp_alpha,
-                                min_samples_split=min_samples_split)
 
 def fine_tune_xgboost(gpu,X_train, X_val, Y_train, Y_val):
     global params
@@ -247,39 +214,3 @@ def store_results( results):
         f_out.write("By both:{} params:{}\n".format(best_both[model + "_score"], best_both[model]))
 
     f_out.close()
-
-parser = argparse.ArgumentParser(description='Model fine-tuning parameters')
-
-parser.add_argument('--gpu', type=int,
-                    dest="gpu", default=0,
-                    help="Gpu flag , for usage of XGBoost performance 1 for utilization of gpu and 0 for not use the gpu.")
-parser.add_argument('--model', dest='model', default="all",
-                    help="Name of model used during fine_tuning. \nExample: --model xgboost\n          --model rfor\n          --model svm\n          --model all (for all 3 models fine tuning)")
-parser.add_argument('--iter', type=int,
-                    dest="iterations", default=10,
-                    help="Number of Monte Carlo iterations")
-parser.add_argument('--input',  dest="filename",
-                    default="../data/september_old_labels.csv",
-                    help="filename of file with df dataset")
-
-
-args = parser.parse_args()
-if __name__ == "__main__":
-    models = []
-    if args.model == "all":
-        models = ["xgboost", "svm", "rfor"]
-    elif args.model not in ["xgboost", "rfor", "svm"]:
-        print("Model error:{}".format(args.model))
-        sys.exit(-1)
-    else:
-        models.append(args.model)
-
-    if args.iterations < 1:
-        print("Wrong number of Monte Carlo iterations:{}".format(args.iterations))
-        sys.exit(-1)
-    if args.filename == "":
-        print("Input filename is empty")
-        sys.exit(-1)
-
-    model_results = monte_carlo(models, args.iterations, args.filename, gpu=args.gpu)
-    store_results(model_results)

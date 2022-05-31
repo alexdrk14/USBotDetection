@@ -7,6 +7,9 @@ Code folder contain all scripts for:
 - parameter fine tuning
 - final model performance evaluation
 
+Installation of required packages:
+pip3 install -r requirements.txt
+
 Developed Bot Detection ML framework was trained and tested over Twitter dataset.\
 The particular dataset was collected with use of Twitter API during the 2020 US Election period. During this period we manage to collect tweets/retweets that contain particular hashtags that are correlated with the 2020 US Election topic.
 We provide our dataset in the form of two separated files. In those files we provide already extracted features for each user that was labeled according to our labeling process.

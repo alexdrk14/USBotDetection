@@ -8,10 +8,9 @@ from sklearn.utils import shuffle
 from collections import defaultdict, Counter
 from datetime import datetime
 
-import os
 from utils import *
 
-#feature selection model parameters
+# feature selection model parameters
 objective = "multi:softprob"
 learning_rate = 0.078
 xgb_n_estimators = 490
@@ -19,13 +18,11 @@ max_depth = 4
 colsample_bytree = 0.5
 eval_metric = "aucpr"
 
-
-
 #filename and path of dataset with extracted features
 filename = "../data/us_2020_election_data.csv"
 
 
-def get_most_freq_features(number_of_iter=20):
+def get_most_freq_features(number_of_iter=20, gpu=False):
     feature_scores = []
 
     all_comp = number_of_iter * 5
@@ -69,16 +66,9 @@ def get_most_freq_features(number_of_iter=20):
             # This model used for feature selection.    #
             ############################################
 
-            model = XGBClassifier(objective=objective,
-                                  num_class=2,
-                                  learning_rate=learning_rate,
-                                  n_estimators=xgb_n_estimators,
-                                  max_depth=max_depth,
-                                  colsample_bytree=colsample_bytree,
-                                  eval_metric=eval_metric,
-                                  tree_method="gpu_hist",  # SERVER GPU ONLY
-                                  predictor='gpu_predictor',  # SERVER GPU ONLY
-                                  use_label_encoder=False)
+            model = get_xgboost_model(objective, learning_rate, xgb_n_estimators, max_depth,
+                                      colsample_bytree, eval_metric, num_class=2, gpu=gpu)
+
             model.fit(X_train, y_train)
 
             ##########################################################
@@ -98,16 +88,8 @@ def get_most_freq_features(number_of_iter=20):
             # Train model based on train portion of data with selected features only#
             ########################################################################
 
-            selected_model = XGBClassifier(objective=objective,
-                                           num_class=2,
-                                           learning_rate=learning_rate,
-                                           n_estimators=xgb_n_estimators,
-                                           max_depth=max_depth,
-                                           colsample_bytree=colsample_bytree,
-                                           eval_metric=eval_metric,
-                                           tree_method="gpu_hist",  # SERVER GPU ONLY
-                                           predictor='gpu_predictor',  # SERVER GPU ONLY
-                                           use_label_encoder=False)
+            selected_model = get_xgboost_model(objective, learning_rate, xgb_n_estimators, max_depth,
+                                      colsample_bytree, eval_metric, num_class=2, gpu=gpu)
 
             XGB_fitted_opt = selected_model.fit(X_train, y_train)
 
@@ -168,7 +150,7 @@ def get_most_freq_features(number_of_iter=20):
     return freq_features
 
 
-def sort_features_by_score(features, iteration=10):
+def sort_features_by_score(features, iteration=10, gpu=False):
     feature_score = defaultdict(lambda: 0.0)
 
     for k in range(0, iteration):
@@ -191,16 +173,8 @@ def sort_features_by_score(features, iteration=10):
 
             for feature in features:
                 # Create new model which would be used for feature selection
-                XGB_model = XGBClassifier(objective=objective,
-                                          num_class=2,
-                                          learning_rate=learning_rate,
-                                          n_estimators=xgb_n_estimators,
-                                          max_depth=max_depth,
-                                          colsample_bytree=colsample_bytree,
-                                          eval_metric=eval_metric,
-                                          tree_method="gpu_hist",  # SERVER GPU ONLY
-                                          predictor='gpu_predictor',  # SERVER GPU ONLY
-                                          use_label_encoder=False)
+                XGB_model = get_xgboost_model(objective, learning_rate, xgb_n_estimators, max_depth,
+                                      colsample_bytree, eval_metric, num_class=2, gpu=gpu)
 
                 XGB_X_train = X_train[feature]
                 XGB_X_val = X_val[feature]
@@ -236,7 +210,7 @@ def sort_features_by_score(features, iteration=10):
     return result
 
 
-def monte_carlo(features, nmbr_of_features=list(range(10, 250))):
+def monte_carlo_fs(features, nmbr_of_features=list(range(10, 250)), iteration=20, gpu=False):
     nmbr = [0] * len(features)
 
     f1nes = [0] * len(features)
@@ -250,8 +224,6 @@ def monte_carlo(features, nmbr_of_features=list(range(10, 250))):
     f1nes_train = [0] * len(features)
     auces_train = [0] * len(features)
     f1_and_auc_train = [0] * len(features)
-
-    iteration = 20
 
     for k in range(0, iteration):
         # read from file
@@ -277,16 +249,8 @@ def monte_carlo(features, nmbr_of_features=list(range(10, 250))):
 
             for i in nmbr_of_features:
                 # Create new model which would be used for feature selection
-                XGB_model = XGBClassifier(objective=objective,
-                                          num_class=2,
-                                          learning_rate=learning_rate,
-                                          n_estimators=xgb_n_estimators,
-                                          max_depth=max_depth,
-                                          colsample_bytree=colsample_bytree,
-                                          eval_metric=eval_metric,
-                                          tree_method="gpu_hist",  # SERVER GPU ONLY
-                                          predictor='gpu_predictor',  # SERVER GPU ONLY
-                                          use_label_encoder=False)
+                XGB_model = get_xgboost_model(objective, learning_rate, xgb_n_estimators, max_depth,
+                                      colsample_bytree, eval_metric, num_class=2, gpu=gpu)
 
                 nmbr[i] = i
                 XGB_X_train = X_train[features[:i]]
@@ -371,32 +335,5 @@ def monte_carlo(features, nmbr_of_features=list(range(10, 250))):
     f_out.write("{}".format(features[: f1_and_auc_val.index(max(f1_and_auc_val)) ]))
     f_out.close()
 
-
-
-
-
-if not os.path.isfile("fs_result_phase1"):
-    print("File of freq features not exists")
-    print("Starting identification of most frequent features")
-    feature_list = get_most_freq_features()
-    f_out = open("fs_result_phase1", "w+")
-    f_out.write("{}".format(feature_list))
-    f_out.close()
-else:
-    print("File of freq features exists, loading feature list...")
-    feature_list = ast.literal_eval(open("fs_result_phase1", "r").read())
-
-if not os.path.isfile("fs_result_phase2"):
-    print("No file with sorted features are found")
-    feature_list = sort_features_by_score(feature_list)
-    f_out = open("fs_result_phase2", "w+")
-    f_out.write("{}".format(feature_list))
-    f_out.close()
-else:
-    print("Sorted features are loaded from file")
-    feature_list = ast.literal_eval(open("fs_result_phase2", "r").read())
-
-print("Start of feature measurement")
-monte_carlo(feature_list)
 
 
