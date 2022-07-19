@@ -38,10 +38,12 @@ Developed framework provides state of the art performance over the Twitter US El
 
 Citation:
 ```
-@article{shevtsov2021identification,
-  title={Identification of Twitter Bots based on an Explainable ML Framework: the US 2020 Elections Case Study},
+@inproceedings{shevtsov2022identification,
+  title={Identification of Twitter Bots Based on an Explainable Machine Learning Framework: The US 2020 Elections Case Study},
   author={Shevtsov, Alexander and Tzagkarakis, Christos and Antonakaki, Despoina and Ioannidis, Sotiris},
-  journal={arXiv preprint arXiv:2112.04913},
-  year={2021}
+  booktitle={Proceedings of the International AAAI Conference on Web and Social Media},
+  volume={16},
+  pages={956--967},
+  year={2022}
 }
 ```
